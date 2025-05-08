@@ -17,11 +17,9 @@ export const getHabitsForMonth = (monthKey) => {
     // Default habits for May 2025 (as shown in the example)
     if (monthKey === '2025-5') {
       return [
-        { name: '3 hours of course/Project', description: '(Sat)', progress: {} },
         { name: 'Practice German', description: '(Class, Video, assignment, speaking)', progress: {} },
         { name: 'No Sugar in May', description: '(Bueno, Juice, Biscuit, Drinks)', progress: {} },
-        { name: '10 mins exercise daily', description: '', progress: {} },
-        { name: '1 hour articles writing', description: 'for the week/Course (Sun)', progress: {} }
+
       ];
     }
     
