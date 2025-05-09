@@ -6,6 +6,7 @@
 // Get habits for a specific month
 export const getHabitsForMonth = (monthKey) => {
     try {
+      // First check if this month exists in localStorage
       const savedHabits = localStorage.getItem(`habits-${monthKey}`);
       if (savedHabits) {
         return JSON.parse(savedHabits);
@@ -14,23 +15,23 @@ export const getHabitsForMonth = (monthKey) => {
       console.error('Error loading habits:', error);
     }
     
-    // Default habits for May 2025 (as shown in the example)
+    // Only return default habits for May 2025
     if (monthKey === '2025-5') {
       return [
         { name: 'Practice German', description: '(Class, Video, assignment, speaking)', progress: {} },
         { name: 'No Sugar in May', description: '(Bueno, Juice, Biscuit, Drinks)', progress: {} },
-
       ];
     }
     
-    // Empty habits for other months
+    // For all other months, always return an empty array
     return [];
   };
   
   // Save habits for a specific month
   export const saveHabitsForMonth = (monthKey, habits) => {
     try {
-      if (habits.length > 0) {
+      // Only save if there are habits to save
+      if (habits && habits.length > 0) {
         localStorage.setItem(`habits-${monthKey}`, JSON.stringify(habits));
         return true;
       }
@@ -40,25 +41,56 @@ export const getHabitsForMonth = (monthKey) => {
     return false;
   };
   
-  // Copy habits from previous month
-  export const copyHabitsFromPreviousMonth = (currentMonthKey, previousMonthKey) => {
+  // Get habits from a previous month WITHOUT saving them
+  export const getHabitsFromPreviousMonth = (previousMonthKey) => {
     try {
       const savedHabits = localStorage.getItem(`habits-${previousMonthKey}`);
       if (savedHabits) {
         const prevHabits = JSON.parse(savedHabits);
         // Copy habits but reset progress
-        const newHabits = prevHabits.map(habit => ({
+        return prevHabits.map(habit => ({
           name: habit.name,
-          description: habit.description,
+          description: habit.description || '',
           progress: {}
         }));
-        
-        // Save to current month
-        localStorage.setItem(`habits-${currentMonthKey}`, JSON.stringify(newHabits));
-        return newHabits;
+      }
+      
+      // If no saved habits but it's May 2025, return default habits
+      if (previousMonthKey === '2025-5') {
+        return [
+          { name: 'Practice German', description: '(Class, Video, assignment, speaking)', progress: {} },
+          { name: 'No Sugar in May', description: '(Bueno, Juice, Biscuit, Drinks)', progress: {} },
+        ];
       }
     } catch (error) {
-      console.error('Error copying habits from previous month:', error);
+      console.error('Error getting habits from previous month:', error);
     }
-    return [];
+    
+    // Return a sample habit if nothing else worked
+    return [{ name: 'Sample Habit', description: 'A starter habit', progress: {} }];
+  };
+  
+  // Copy habits from previous month - only when explicitly called by the user
+  export const copyHabitsFromPreviousMonth = (currentMonthKey, previousMonthKey) => {
+    // Log what we're trying to do
+    console.log(`Copying from ${previousMonthKey} to ${currentMonthKey}`);
+    
+    // Get habits from previous month
+    const habitsFromPrevMonth = getHabitsFromPreviousMonth(previousMonthKey);
+    console.log('Habits from previous month:', habitsFromPrevMonth);
+    
+    // Always return something, even if it's just a sample habit
+    const habitsToSave = habitsFromPrevMonth.length > 0 
+      ? habitsFromPrevMonth 
+      : [{ name: 'New Habit', description: 'Created for a new month', progress: {} }];
+    
+    // Save to current month
+    try {
+      localStorage.setItem(`habits-${currentMonthKey}`, JSON.stringify(habitsToSave));
+      console.log('Successfully saved habits to current month');
+      return habitsToSave;
+    } catch (error) {
+      console.error('Error saving copied habits:', error);
+      return habitsToSave; // Still return the habits even if saving failed
+    }
   };

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { 
   getHabitsForMonth, 
   saveHabitsForMonth, 
-  copyHabitsFromPreviousMonth 
+  copyHabitsFromPreviousMonth,
+  getHabitsFromPreviousMonth
 } from '../services/storageService';
 import { toggleDayStatus } from '../utils/streakUtils';
 
@@ -14,28 +15,28 @@ const useHabits = (monthKey, previousMonthKey) => {
   const [newHabit, setNewHabit] = useState('');
   const [newHabitDescription, setNewHabitDescription] = useState('');
   const [editingIndex, setEditingIndex] = useState(null);
+  const [lastMonthKey, setLastMonthKey] = useState('');
   
   // Load habits when month changes
   useEffect(() => {
-    const monthHabits = getHabitsForMonth(monthKey);
-    setHabits(monthHabits);
-  }, [monthKey]);
-  
-  // Save habits when they change
-  useEffect(() => {
-    if (habits.length > 0) {
-      saveHabitsForMonth(monthKey, habits);
+    // Only reload habits if we're looking at a new month
+    if (monthKey !== lastMonthKey) {
+      const monthHabits = getHabitsForMonth(monthKey);
+      setHabits(monthHabits);
+      setLastMonthKey(monthKey);
     }
-  }, [habits, monthKey]);
+  }, [monthKey, lastMonthKey]);
   
   // Add a new habit
   const addHabit = () => {
     if (newHabit.trim() !== '') {
-      setHabits([...habits, { 
+      const updatedHabits = [...habits, { 
         name: newHabit, 
         description: newHabitDescription,
         progress: {} 
-      }]);
+      }];
+      setHabits(updatedHabits);
+      saveHabitsForMonth(monthKey, updatedHabits);
       setNewHabit('');
       setNewHabitDescription('');
     }
@@ -46,6 +47,7 @@ const useHabits = (monthKey, previousMonthKey) => {
     const updatedHabits = [...habits];
     updatedHabits.splice(index, 1);
     setHabits(updatedHabits);
+    saveHabitsForMonth(monthKey, updatedHabits);
   };
   
   // Start editing a habit
@@ -65,6 +67,7 @@ const useHabits = (monthKey, previousMonthKey) => {
         description: newHabitDescription
       };
       setHabits(updatedHabits);
+      saveHabitsForMonth(monthKey, updatedHabits);
       setEditingIndex(null);
       setNewHabit('');
       setNewHabitDescription('');
@@ -86,14 +89,19 @@ const useHabits = (monthKey, previousMonthKey) => {
       progress: toggleDayStatus(updatedHabits[habitIndex].progress, day)
     };
     setHabits(updatedHabits);
+    saveHabitsForMonth(monthKey, updatedHabits);
   };
   
   // Copy habits from previous month
   const copyFromPreviousMonth = () => {
-    const copiedHabits = copyHabitsFromPreviousMonth(monthKey, previousMonthKey);
-    if (copiedHabits.length > 0) {
-      setHabits(copiedHabits);
-      return true;
+    // Only if we have no habits in the current month
+    if (habits.length === 0) {
+      // This explicitly calls the function that copies and saves habits
+      const copiedHabits = copyHabitsFromPreviousMonth(monthKey, previousMonthKey);
+      if (copiedHabits.length > 0) {
+        setHabits(copiedHabits);
+        return true;
+      }
     }
     return false;
   };
