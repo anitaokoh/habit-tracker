@@ -1,0 +1,55 @@
+name: Deploy to GitHub Pages and Create Release
+
+on:
+  push:
+    branches: main  # Run on push to main or master branch
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  build-deploy-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Needed for versioning
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23'
+          cache: 'npm'
+
+      - name: Install dependencies 📦
+        run: npm ci
+
+      # Make the versioning script executable
+      - name: Make versioning script executable
+        run: chmod +x .github/scripts/bump-version.sh
+
+      # Use the external versioning script
+      - name: Determine Version 🏷️
+        id: versioning
+        run: .github/scripts/bump-version.sh
+
+      - name: Build 🏗️
+        run: npm run build
+        
+      - name: Deploy to GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          # The action will automatically use the GITHUB_TOKEN
+          
+      # Create a new release with the generated changelog
+      - name: Create Release 📝
+        uses: softprops/action-gh-release@v1
+        if: steps.versioning.outputs.new_version != ''
+        with:
+          tag_name: ${{ steps.versioning.outputs.new_version }}
+          name: Release ${{ steps.versioning.outputs.new_version }}
+          body_path: changelog.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

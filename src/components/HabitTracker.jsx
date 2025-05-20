@@ -2,6 +2,7 @@ import React from 'react';
 import MonthNavigation from './MonthNavigation';
 import HabitForm from './HabitForm';
 import HabitTable from './HabitTable';
+import NotificationBell from './NotificationBell';
 import useMonthNavigation from '../hooks/useMonthNavigation';
 import useHabits from '../hooks/useHabits';
 
@@ -17,9 +18,9 @@ const HabitTracker = () => {
     goToPreviousMonth,
     goToNextMonth,
     goToCurrentMonth,
-    getPreviousMonthKey
+    getPreviousMonthKey,
   } = useMonthNavigation();
-  
+
   const {
     habits,
     newHabit,
@@ -34,24 +35,27 @@ const HabitTracker = () => {
     cancelEdit,
     toggleDay,
     copyFromPreviousMonth,
-    handleKeyPress
+    handleKeyPress,
   } = useHabits(monthDetails.monthKey, getPreviousMonthKey());
-  
+
   // Check if this is a new month with no habits
   const isNewMonth = habits.length === 0;
-  
+
   return (
     <div className="max-w-6xl mx-auto p-4">
-      {/* Month Navigation */}
-      <MonthNavigation 
-        monthDetails={monthDetails}
-        onPrevMonth={goToPreviousMonth}
-        onNextMonth={goToNextMonth}
-        onCurrentMonth={goToCurrentMonth}
-        showCopyButton={isNewMonth}
-        onCopyFromPrevious={copyFromPreviousMonth}
-      />
-      
+      {/* Header with Month Navigation and Notification Bell */}
+      <div className="flex justify-between items-center mb-4">
+        <MonthNavigation
+          monthDetails={monthDetails}
+          onPrevMonth={goToPreviousMonth}
+          onNextMonth={goToNextMonth}
+          onCurrentMonth={goToCurrentMonth}
+          showCopyButton={isNewMonth}
+          onCopyFromPrevious={copyFromPreviousMonth}
+        />
+        <NotificationBell />
+      </div>
+
       {/* Habit Form */}
       <HabitForm
         newHabit={newHabit}
@@ -64,7 +68,7 @@ const HabitTracker = () => {
         onCancel={cancelEdit}
         onKeyPress={handleKeyPress}
       />
-      
+
       {/* Habit Table */}
       <HabitTable
         habits={habits}
