@@ -15,6 +15,7 @@ This Habit Tracker application helps you build consistent habits by tracking you
 - ✓ Track daily habit completion with a simple click
 - 🔥 View your current streak for each habit
 - 📋 Optional descriptions for each habit
+- 🔔 Notification bell for updates when new versions are available
 - 📱 Responsive design that works on desktop and mobile
 - 💾 Persistent storage (saves your data in the browser)
 - 🔄 Copy habits from previous months
@@ -25,21 +26,25 @@ This Habit Tracker application helps you build consistent habits by tracking you
 - [Vite](https://vitejs.dev/) - Build tool
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [Lucide React](https://lucide.dev/) - Icons
+- [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) - Offline support and updates
 
 ## 📦 Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/habit-tracker.git
    cd habit-tracker
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -71,6 +76,12 @@ This Habit Tracker application helps you build consistent habits by tracking you
 - Click 'Today' to return to the current month
 - When entering a new month, you can copy habits from the previous month
 
+### Update Notifications
+
+- The notification bell in the top-right corner will show a red dot when updates are available
+- Click the bell to refresh and get the latest version
+- After updating, the red dot will disappear until the next update
+
 ## 📁 Project Structure
 
 ```
@@ -81,7 +92,8 @@ src/
 │   ├── HabitRow.jsx         # Individual habit row component
 │   ├── HabitTable.jsx       # Main habit tracking table
 │   ├── HabitTracker.jsx     # Main container component
-│   └── MonthNavigation.jsx  # Month navigation controls
+│   ├── MonthNavigation.jsx  # Month navigation controls
+│   └── NotificationBell.jsx  # Update notification component
 ├── hooks/         # Custom React hooks
 │   ├── useHabits.js         # Habit management logic
 │   └── useMonthNavigation.js # Month navigation logic
@@ -89,7 +101,8 @@ src/
 │   └── storageService.js    # Local storage management
 ├── utils/         # Utility functions
 │   ├── dateUtils.js         # Date manipulation helpers
-│   └── streakUtils.js       # Streak calculation helpers
+│   ├── streakUtils.js       # Streak calculation helpers
+│   └── serviceWorkerUtils.js # Service worker management
 ├── App.jsx        # Root application component
 ├── index.css      # Global styles
 └── main.jsx       # Application entry point
@@ -101,10 +114,53 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+3. Commit your changes using the conventional commit format (see below)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+### 📝 Commit Guidelines
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/) format to automate versioning and release notes. Please format your commit messages as follows:
+
+```
+<type>[optional scope]: <description>
+```
+
+Types include:
+
+- `feat:` - A new feature (triggers a minor version bump)
+- `fix:` - A bug fix (triggers a patch version bump)
+- `docs:` - Documentation only changes
+- `style:` - Changes that don't affect the code's meaning (white-space, formatting, etc.)
+- `refactor:` - A code change that neither fixes a bug nor adds a feature
+- `perf:` - A code change that improves performance
+- `test:` - Adding missing tests or correcting existing tests
+- `chore:` - Changes to the build process or auxiliary tools
+- `BREAKING CHANGE:` - Introduction of breaking changes (triggers a major version bump)
+
+Examples of good commit messages:
+
+```
+feat: add notification bell for updates
+fix: prevent streak count reset when marking habits with X
+chore: update dependencies
+BREAKING CHANGE: redesigned user interface
+```
+
+### 🔄 Releases
+
+This project uses GitHub Actions to automate the release process. When commits are pushed to the main branch:
+
+1. The app is automatically built and deployed to GitHub Pages
+2. A new version number is determined based on the commit messages
+3. A GitHub Release is created with auto-generated release notes
+4. Users are notified of updates via the notification bell in the app
+
+The version follows Semantic Versioning (MAJOR.MINOR.PATCH):
+
+- Major version bump (1.0.0 → 2.0.0): Commits with "BREAKING CHANGE"
+- Minor version bump (1.0.0 → 1.1.0): Commits starting with "feat:"
+- Patch version bump (1.0.0 → 1.0.1): Commits starting with "fix:" or any other changes
 
 ## 👏 Acknowledgments
 
@@ -115,4 +171,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ---
 
 Made with ❤️ by Anita Okoh
-
