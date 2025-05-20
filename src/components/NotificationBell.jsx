@@ -11,28 +11,39 @@ const NotificationBell = () => {
   // Function to check for updates using service worker
   const checkForUpdatesFn = async () => {
     try {
-      // Primary method: Check for service worker updates
-      const hasNewVersion = await checkForUpdates();
-
-      if (hasNewVersion) {
-        setHasUpdates(true);
-        return;
-      }
+      console.log('Checking for updates...');
 
       // Secondary method: Check for app build changes using timestamp
       // The __APP_BUILD_TIME__ variable is injected at build time in vite.config.js
       const currentBuildTime = window.__APP_BUILD_TIME__ || '0';
+      console.log('Current build time:', currentBuildTime);
+
       const storedBuildTime = localStorage.getItem('appBuildTime') || '0';
+      console.log('Stored build time:', storedBuildTime);
 
       // First time visit - store the current build time
       if (!localStorage.getItem('appBuildTime')) {
+        console.log('First visit, storing build time');
         localStorage.setItem('appBuildTime', currentBuildTime);
         return;
       }
 
       // If build times don't match, we have an update
       if (currentBuildTime !== storedBuildTime && currentBuildTime !== '0') {
+        console.log('Build time mismatch, update available');
         setHasUpdates(true);
+      }
+
+      // Primary method: Check for service worker updates
+      if ('serviceWorker' in navigator) {
+        const hasNewVersion = await checkForUpdates();
+        console.log('Service worker update check result:', hasNewVersion);
+
+        if (hasNewVersion) {
+          setHasUpdates(true);
+        }
+      } else {
+        console.log('Service Worker not supported in this browser');
       }
     } catch (error) {
       console.error('Error checking for updates:', error);

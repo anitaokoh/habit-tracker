@@ -6,7 +6,11 @@
 export const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register('/service-worker.js');
+      // Get the base URL from Vite's import.meta.env or fall back to '/' for local development
+      const baseUrl = import.meta.env.BASE_URL || '/';
+      const swPath = `${baseUrl}service-worker.js`;
+
+      const registration = await navigator.serviceWorker.register(swPath);
       console.log('Service Worker registered with scope:', registration.scope);
       return registration;
     } catch (error) {
@@ -21,15 +25,44 @@ export const registerServiceWorker = async () => {
 export const checkForUpdates = async () => {
   if ('serviceWorker' in navigator) {
     try {
+      console.log('Checking for service worker updates...');
       const registration = await navigator.serviceWorker.getRegistration();
-      if (registration) {
-        // This will check for updates
-        await registration.update();
-        return !!registration.waiting;
+
+      if (!registration) {
+        console.log('No service worker registration found');
+        return false;
       }
+
+      console.log(
+        'Current service worker state:',
+        registration.installing
+          ? 'installing'
+          : registration.waiting
+            ? 'waiting'
+            : registration.active
+              ? 'active'
+              : 'unknown'
+      );
+
+      // This will check for updates
+      await registration.update();
+      console.log(
+        'After update check, service worker state:',
+        registration.installing
+          ? 'installing'
+          : registration.waiting
+            ? 'waiting'
+            : registration.active
+              ? 'active'
+              : 'unknown'
+      );
+
+      return !!registration.waiting;
     } catch (error) {
       console.error('Error checking for Service Worker updates:', error);
     }
+  } else {
+    console.log('Service Worker API not available');
   }
   return false;
 };
