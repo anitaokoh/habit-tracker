@@ -39,7 +39,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
-          # The action will automatically use the GITHUB_TOKEN
+          token: ${{ secrets.GITHUB_TOKEN }}
           
       # Create a new release with the generated changelog
       - name: Create Release 📝
