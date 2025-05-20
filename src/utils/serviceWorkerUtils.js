@@ -8,8 +8,11 @@ export const registerServiceWorker = async () => {
     try {
       // Get the base URL from Vite's import.meta.env or fall back to '/' for local development
       const baseUrl = import.meta.env.BASE_URL || '/';
+
       // Ensure baseUrl ends with a slash
       const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+
+      // Construct the correct path for the service worker
       const swPath = `${normalizedBaseUrl}service-worker.js`;
 
       console.log('Registering service worker at path:', swPath);
