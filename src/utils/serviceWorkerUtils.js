@@ -11,6 +11,7 @@ export const registerServiceWorker = async () => {
       // Ensure baseUrl ends with a slash
       const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
       const swPath = `${normalizedBaseUrl}service-worker.js`;
+
       console.log('Registering service worker at path:', swPath);
 
       const registration = await navigator.serviceWorker.register(swPath);
