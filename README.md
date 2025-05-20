@@ -160,7 +160,8 @@ The version follows Semantic Versioning (MAJOR.MINOR.PATCH):
 
 - Major version bump (1.0.0 → 2.0.0): Commits with "BREAKING CHANGE"
 - Minor version bump (1.0.0 → 1.1.0): Commits starting with "feat:"
-- Patch version bump (1.0.0 → 1.0.1): Commits starting with "fix:" or any other changes
+- Patch version bump (1.0.0 → 1.0.1): Commits starting with "fix:" or "chore:"
+- No version bump: Any other commit types
 
 ## 👏 Acknowledgments
 

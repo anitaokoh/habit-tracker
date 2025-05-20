@@ -15,9 +15,10 @@ PATCH=$(echo $LATEST_TAG | cut -d. -f3)
 # Check for keywords in commit messages to determine bump type
 FEAT=$(git log $LATEST_TAG..HEAD --pretty=format:'%s' | grep -i '^feat:' | wc -l)
 FIX=$(git log $LATEST_TAG..HEAD --pretty=format:'%s' | grep -i '^fix:' | wc -l)
+CHORE=$(git log $LATEST_TAG..HEAD --pretty=format:'%s' | grep -i '^chore:' | wc -l)
 BREAKING=$(git log $LATEST_TAG..HEAD --pretty=format:'%s' | grep -i 'BREAKING CHANGE' | wc -l)
 
-echo "Found $BREAKING breaking changes, $FEAT new features, and $FIX bug fixes"
+echo "Found $BREAKING breaking changes, $FEAT new features, $FIX bug fixes, and $CHORE chores"
 
 # Determine version bump
 if [ $BREAKING -gt 0 ]; then
@@ -27,10 +28,12 @@ if [ $BREAKING -gt 0 ]; then
 elif [ $FEAT -gt 0 ]; then
   MINOR=$((MINOR + 1))
   PATCH=0
-elif [ $FIX -gt 0 ]; then
+elif [ $FIX -gt 0 ] || [ $CHORE -gt 0 ]; then
+  # Only bump patch version for fix or chore commits
   PATCH=$((PATCH + 1))
 else
-  PATCH=$((PATCH + 1))
+  # No version change if no fix, chore, feat, or breaking changes
+  echo "No version bump needed - no fix, chore, feat, or breaking changes detected"
 fi
 
 # Set new version
@@ -57,9 +60,15 @@ if [ $FIX -gt 0 ]; then
   git log $LATEST_TAG..HEAD --pretty=format:'- %s' | grep -i '^fix:' | sed 's/^fix: //' >> changelog.md
 fi
 
+# Chores
+if [ $CHORE -gt 0 ]; then
+  echo -e "\n### Maintenance" >> changelog.md
+  git log $LATEST_TAG..HEAD --pretty=format:'- %s' | grep -i '^chore:' | sed 's/^chore: //' >> changelog.md
+fi
+
 # Other changes
 echo -e "\n### Other Changes" >> changelog.md
-git log $LATEST_TAG..HEAD --pretty=format:'- %s' | grep -v -i '^feat:' | grep -v -i '^fix:' >> changelog.md
+git log $LATEST_TAG..HEAD --pretty=format:'- %s' | grep -v -i '^feat:' | grep -v -i '^fix:' | grep -v -i '^chore:' >> changelog.md
 
 # Output the changelog
 echo "Generated changelog:"
