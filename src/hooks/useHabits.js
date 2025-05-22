@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { 
-  getHabitsForMonth, 
-  saveHabitsForMonth, 
+import {
+  getHabitsForMonth,
+  saveHabitsForMonth,
   copyHabitsFromPreviousMonth,
-  getHabitsFromPreviousMonth
 } from '../services/storageService';
 import { toggleDayStatus } from '../utils/streakUtils';
 
@@ -15,33 +14,39 @@ const useHabits = (monthKey, previousMonthKey) => {
   const [newHabit, setNewHabit] = useState('');
   const [newHabitDescription, setNewHabitDescription] = useState('');
   const [editingIndex, setEditingIndex] = useState(null);
-  const [lastMonthKey, setLastMonthKey] = useState('');
-  
+
   // Load habits when month changes
   useEffect(() => {
-    // Only reload habits if we're looking at a new month
-    if (monthKey !== lastMonthKey) {
-      const monthHabits = getHabitsForMonth(monthKey);
-      setHabits(monthHabits);
-      setLastMonthKey(monthKey);
-    }
-  }, [monthKey, lastMonthKey]);
-  
+    // Always reload habits when monthKey changes to ensure fresh data
+    console.log(`Loading habits for month: ${monthKey}`);
+    const monthHabits = getHabitsForMonth(monthKey);
+    console.log(`Loaded ${monthHabits.length} habits for ${monthKey}`);
+    setHabits(monthHabits);
+
+    // Clear any editing state when switching months
+    setEditingIndex(null);
+    setNewHabit('');
+    setNewHabitDescription('');
+  }, [monthKey]);
+
   // Add a new habit
   const addHabit = () => {
     if (newHabit.trim() !== '') {
-      const updatedHabits = [...habits, { 
-        name: newHabit, 
-        description: newHabitDescription,
-        progress: {} 
-      }];
+      const updatedHabits = [
+        ...habits,
+        {
+          name: newHabit,
+          description: newHabitDescription,
+          progress: {},
+        },
+      ];
       setHabits(updatedHabits);
       saveHabitsForMonth(monthKey, updatedHabits);
       setNewHabit('');
       setNewHabitDescription('');
     }
   };
-  
+
   // Remove a habit
   const removeHabit = (index) => {
     const updatedHabits = [...habits];
@@ -49,14 +54,14 @@ const useHabits = (monthKey, previousMonthKey) => {
     setHabits(updatedHabits);
     saveHabitsForMonth(monthKey, updatedHabits);
   };
-  
+
   // Start editing a habit
   const startEditing = (index) => {
     setEditingIndex(index);
     setNewHabit(habits[index].name);
     setNewHabitDescription(habits[index].description || '');
   };
-  
+
   // Save edited habit
   const saveEdit = () => {
     if (editingIndex !== null && newHabit.trim() !== '') {
@@ -64,7 +69,7 @@ const useHabits = (monthKey, previousMonthKey) => {
       updatedHabits[editingIndex] = {
         ...updatedHabits[editingIndex],
         name: newHabit,
-        description: newHabitDescription
+        description: newHabitDescription,
       };
       setHabits(updatedHabits);
       saveHabitsForMonth(monthKey, updatedHabits);
@@ -73,25 +78,25 @@ const useHabits = (monthKey, previousMonthKey) => {
       setNewHabitDescription('');
     }
   };
-  
+
   // Cancel editing
   const cancelEdit = () => {
     setEditingIndex(null);
     setNewHabit('');
     setNewHabitDescription('');
   };
-  
+
   // Toggle habit completion status for a day
   const toggleDay = (habitIndex, day) => {
     const updatedHabits = [...habits];
     updatedHabits[habitIndex] = {
       ...updatedHabits[habitIndex],
-      progress: toggleDayStatus(updatedHabits[habitIndex].progress, day)
+      progress: toggleDayStatus(updatedHabits[habitIndex].progress, day),
     };
     setHabits(updatedHabits);
     saveHabitsForMonth(monthKey, updatedHabits);
   };
-  
+
   // Copy habits from previous month
   const copyFromPreviousMonth = () => {
     // Only if we have no habits in the current month
@@ -105,7 +110,7 @@ const useHabits = (monthKey, previousMonthKey) => {
     }
     return false;
   };
-  
+
   // Handle key press for adding habits
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -116,7 +121,7 @@ const useHabits = (monthKey, previousMonthKey) => {
       }
     }
   };
-  
+
   return {
     habits,
     newHabit,
@@ -131,7 +136,7 @@ const useHabits = (monthKey, previousMonthKey) => {
     cancelEdit,
     toggleDay,
     copyFromPreviousMonth,
-    handleKeyPress
+    handleKeyPress,
   };
 };
 
