@@ -36,7 +36,7 @@ const HabitTable = ({ habits, daysInMonth, currentDate, onToggleDay, onEdit, onD
                     className={`p-1 md:p-3 text-center w-8 md:w-10 ${isFuture ? 'text-gray-500' : ''}`}
                   >
                     <div>{day}</div>
-                    <div className="hidden xs:block text-xs text-gray-400">
+                    <div className="text-xs text-gray-400">
                       {getDayOfWeek(currentDate.getFullYear(), currentDate.getMonth(), day)}
                     </div>
                   </th>

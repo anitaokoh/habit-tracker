@@ -159,7 +159,7 @@ const HabitTracker = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-2 sm:p-4">
+    <div className="max-w-6xl mx-auto p-4 sm:p-6">
       {/* Header with Month Navigation and Notification Bell */}
       <div className="flex flex-row justify-between items-center mb-4 gap-3">
         <MonthNavigation
