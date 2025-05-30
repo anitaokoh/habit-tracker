@@ -139,13 +139,13 @@ const HabitTracker = () => {
   return (
     <div className="max-w-6xl mx-auto p-2 sm:p-4">
       {/* Header with Month Navigation and Notification Bell */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+      <div className="flex flex-row justify-between items-center mb-4 gap-3">
         <MonthNavigation
           monthDetails={monthDetails}
           onPrevMonth={goToPreviousMonth}
           onNextMonth={goToNextMonth}
         />
-        <div className="flex items-center space-x-3 self-end sm:self-auto">
+        <div className="flex items-center space-x-3">
           <NotificationBell />
           <MoreOptionsMenu isNewMonth={isNewMonth} onCopyFromPrevious={copyFromPreviousMonth} />
         </div>
