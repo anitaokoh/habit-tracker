@@ -27,7 +27,8 @@
   "dependencies": {
     "lucide-react": "^0.508.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-ga4": "^2.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

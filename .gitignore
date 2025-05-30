@@ -27,3 +27,8 @@ node_modules/
 .eslintcache
 .stylelintcache
 .cache/
+
+# Environment files
+.env
+.env.local
+.env.*.local

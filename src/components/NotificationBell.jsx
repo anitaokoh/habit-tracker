@@ -86,13 +86,13 @@ const NotificationBell = () => {
 
   return (
     <div
-      className="relative cursor-pointer"
+      className="relative p-1.5 sm:p-2 hover:bg-gray-700 rounded cursor-pointer"
       onClick={handleRefresh}
       title={hasUpdates ? 'Update available! Click to refresh' : 'Check for updates'}
     >
-      <Bell size={24} className="text-gray-300 hover:text-white" />
+      <Bell size={20} className="text-gray-300 hover:text-white" />
       {hasUpdates && (
-        <div className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border border-gray-800"></div>
+        <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-gray-800"></div>
       )}
     </div>
   );

@@ -18,6 +18,28 @@ export const calculateStreak = (progress, daysInMonth) => {
   return currentStreak;
 };
 
+// Calculate the total number of check marks (true values) for a habit's progress
+export const calculateLongestStreak = (progress /* daysInMonth param not currently used */) => {
+  // Count total number of check marks (true values) in the habit's progress
+  // This is now a count of total completions, not consecutive days
+  const totalChecks = Object.values(progress).filter((status) => status === true).length;
+
+  return totalChecks;
+};
+
+// Calculate success rate as percentage of completed days
+export const calculateSuccessRate = (progress) => {
+  // Count only days that have been tracked (have any status)
+  const totalDays = Object.keys(progress).length;
+  if (totalDays === 0) return 0;
+
+  // Count only true (completed) entries
+  const completedDays = Object.values(progress).filter((status) => status === true).length;
+
+  // Calculate percentage rounded to nearest integer
+  return Math.round((completedDays / totalDays) * 100);
+};
+
 // Get the appropriate status icon based on completion status
 export const getStatusIcon = (status) => {
   if (status === true) return { type: 'check', className: 'text-green-500', size: 18 };
