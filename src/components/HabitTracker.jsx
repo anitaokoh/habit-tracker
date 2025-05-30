@@ -7,13 +7,13 @@ import Modal from './Modal';
 import StatsOverview from './StatsOverview';
 import useMonthNavigation from '../hooks/useMonthNavigation';
 import useHabits from '../hooks/useHabits';
-import { Plus, MoreVertical, Copy } from 'lucide-react';
+import { Plus, MoreVertical, Copy, Coffee } from 'lucide-react';
 import { trackCopyFromPrevious } from '../services/analyticsService';
 
 /**
  * More options menu component with dropdown
  */
-const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious }) => {
+const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious, onSupportProject }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -52,6 +52,11 @@ const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious }) => {
     setIsOpen(false);
   };
 
+  const handleSupportProject = () => {
+    onSupportProject();
+    setIsOpen(false);
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       <button
@@ -72,7 +77,13 @@ const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious }) => {
             <Copy size={14} className="mr-2 flex-shrink-0" />
             <span className="whitespace-normal">Copy from Previous Month</span>
           </button>
-          {/* Add more menu options here as needed */}
+          <button
+            className="w-full text-left px-3 sm:px-4 py-2 flex items-center text-sm sm:text-base text-blue-400 hover:bg-gray-700 border-t border-gray-700"
+            onClick={handleSupportProject}
+          >
+            <Coffee size={14} className="mr-2 flex-shrink-0" />
+            <span className="whitespace-normal">Support the Project</span>
+          </button>
         </div>
       )}
     </div>
@@ -122,6 +133,7 @@ const HabitTracker = () => {
 
   // State for controlling the modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isKofiModalOpen, setIsKofiModalOpen] = useState(false);
 
   // Function to close modal and reset the form when closed
   const handleCloseModal = () => {
@@ -136,6 +148,16 @@ const HabitTracker = () => {
     setIsModalOpen(true);
   };
 
+  // Function to open Ko-fi support modal
+  const handleOpenKofiModal = () => {
+    setIsKofiModalOpen(true);
+  };
+
+  // Function to close Ko-fi modal
+  const handleCloseKofiModal = () => {
+    setIsKofiModalOpen(false);
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-2 sm:p-4">
       {/* Header with Month Navigation and Notification Bell */}
@@ -147,7 +169,11 @@ const HabitTracker = () => {
         />
         <div className="flex items-center space-x-3">
           <NotificationBell />
-          <MoreOptionsMenu isNewMonth={isNewMonth} onCopyFromPrevious={copyFromPreviousMonth} />
+          <MoreOptionsMenu
+            isNewMonth={isNewMonth}
+            onCopyFromPrevious={copyFromPreviousMonth}
+            onSupportProject={handleOpenKofiModal}
+          />
         </div>
       </div>
 
@@ -187,6 +213,33 @@ const HabitTracker = () => {
           onCancel={handleCloseModal}
           onKeyPress={handleKeyPress}
         />
+      </Modal>
+
+      {/* Ko-fi Support Modal */}
+      <Modal
+        isOpen={isKofiModalOpen}
+        onClose={handleCloseKofiModal}
+        title="Support Habit Tracker ☕"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-300 text-sm">
+            Enjoying the habit tracker? Consider supporting to keep the app free for everyone! 🙏
+          </p>
+          <div className="bg-gray-100 rounded-lg overflow-hidden">
+            <iframe
+              id="kofiframe"
+              src="https://ko-fi.com/nits_koh/?hidefeed=true&widget=true&embed=true&preview=true&minimal=true"
+              style={{
+                border: 'none',
+                width: '100%',
+                padding: '4px',
+                background: '#f9f9f9',
+              }}
+              height="400"
+              title="nits_koh"
+            />
+          </div>
+        </div>
       </Modal>
 
       {/* Habit Table */}
