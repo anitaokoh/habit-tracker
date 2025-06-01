@@ -7,13 +7,13 @@ import Modal from './Modal';
 import StatsOverview from './StatsOverview';
 import useMonthNavigation from '../hooks/useMonthNavigation';
 import useHabits from '../hooks/useHabits';
-import { Plus, MoreVertical, Copy, Coffee } from 'lucide-react';
+import { Plus, MoreVertical, Copy, Coffee, MessageCircle } from 'lucide-react';
 import { trackCopyFromPrevious } from '../services/analyticsService';
 
 /**
  * More options menu component with dropdown
  */
-const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious, onSupportProject }) => {
+const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious, onSupportProject, onSendFeedback }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -57,6 +57,11 @@ const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious, onSupportProject }) =
     setIsOpen(false);
   };
 
+  const handleSendFeedback = () => {
+    onSendFeedback();
+    setIsOpen(false);
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       <button
@@ -76,6 +81,13 @@ const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious, onSupportProject }) =
           >
             <Copy size={14} className="mr-2 flex-shrink-0" />
             <span className="whitespace-normal">Copy from Previous Month</span>
+          </button>
+          <button
+            className="w-full text-left px-3 sm:px-4 py-2 flex items-center text-sm sm:text-base text-green-400 hover:bg-gray-700"
+            onClick={handleSendFeedback}
+          >
+            <MessageCircle size={14} className="mr-2 flex-shrink-0" />
+            <span className="whitespace-normal">Send Feedback</span>
           </button>
           <button
             className="w-full text-left px-3 sm:px-4 py-2 flex items-center text-sm sm:text-base text-blue-400 hover:bg-gray-700 border-t border-gray-700"
@@ -134,6 +146,7 @@ const HabitTracker = () => {
   // State for controlling the modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isKofiModalOpen, setIsKofiModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   // Function to close modal and reset the form when closed
   const handleCloseModal = () => {
@@ -158,6 +171,16 @@ const HabitTracker = () => {
     setIsKofiModalOpen(false);
   };
 
+  // Function to open feedback modal
+  const handleOpenFeedbackModal = () => {
+    setIsFeedbackModalOpen(true);
+  };
+
+  // Function to close feedback modal
+  const handleCloseFeedbackModal = () => {
+    setIsFeedbackModalOpen(false);
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
       {/* Header with Month Navigation and Notification Bell */}
@@ -173,6 +196,7 @@ const HabitTracker = () => {
             isNewMonth={isNewMonth}
             onCopyFromPrevious={copyFromPreviousMonth}
             onSupportProject={handleOpenKofiModal}
+            onSendFeedback={handleOpenFeedbackModal}
           />
         </div>
       </div>
@@ -237,6 +261,30 @@ const HabitTracker = () => {
               }}
               height="400"
               title="nits_koh"
+            />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Feedback Modal */}
+      <Modal
+        isOpen={isFeedbackModalOpen}
+        onClose={handleCloseFeedbackModal}
+        title="Send Feedback 💬"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-300 text-sm">
+            Help us improve the habit tracker! Share your thoughts, suggestions, or report any
+            issues.
+          </p>
+          <div className="bg-gray-100 rounded-lg overflow-hidden">
+            <iframe
+              src="https://branch-snowboard-ca9.notion.site/ebd/205f98b64a72806e874bf73d8b0e1692"
+              width="100%"
+              height="300"
+              frameBorder="0"
+              allowFullScreen
+              title="Feedback Form"
             />
           </div>
         </div>
