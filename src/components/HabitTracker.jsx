@@ -7,13 +7,19 @@ import Modal from './Modal';
 import StatsOverview from './StatsOverview';
 import useMonthNavigation from '../hooks/useMonthNavigation';
 import useHabits from '../hooks/useHabits';
-import { Plus, MoreVertical, Copy, Coffee, MessageCircle } from 'lucide-react';
+import { Plus, MoreVertical, Copy, Coffee, MessageCircle, Info, Check, X } from 'lucide-react';
 import { trackCopyFromPrevious } from '../services/analyticsService';
 
 /**
  * More options menu component with dropdown
  */
-const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious, onSupportProject, onSendFeedback }) => {
+const MoreOptionsMenu = ({
+  isNewMonth,
+  onCopyFromPrevious,
+  onSupportProject,
+  onSendFeedback,
+  onShowInstructions,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -62,6 +68,11 @@ const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious, onSupportProject, onS
     setIsOpen(false);
   };
 
+  const handleShowInstructions = () => {
+    onShowInstructions();
+    setIsOpen(false);
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       <button
@@ -74,6 +85,13 @@ const MoreOptionsMenu = ({ isNewMonth, onCopyFromPrevious, onSupportProject, onS
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 sm:w-64 py-2 bg-gray-800 rounded-md shadow-lg z-20">
+          <button
+            className="w-full text-left px-3 sm:px-4 py-2 flex items-center text-sm sm:text-base text-white hover:bg-gray-700"
+            onClick={handleShowInstructions}
+          >
+            <Info size={14} className="mr-2 flex-shrink-0" />
+            <span className="whitespace-normal">Instructions</span>
+          </button>
           <button
             className={`w-full text-left px-3 sm:px-4 py-2 flex items-center text-sm sm:text-base ${isNewMonth ? 'text-white hover:bg-gray-700' : 'text-gray-500 cursor-not-allowed'}`}
             onClick={isNewMonth ? handleCopyFromPrevious : undefined}
@@ -147,6 +165,7 @@ const HabitTracker = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isKofiModalOpen, setIsKofiModalOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [isInstructionsModalOpen, setIsInstructionsModalOpen] = useState(false);
 
   // Function to close modal and reset the form when closed
   const handleCloseModal = () => {
@@ -181,6 +200,16 @@ const HabitTracker = () => {
     setIsFeedbackModalOpen(false);
   };
 
+  // Function to open instructions modal
+  const handleOpenInstructionsModal = () => {
+    setIsInstructionsModalOpen(true);
+  };
+
+  // Function to close instructions modal
+  const handleCloseInstructionsModal = () => {
+    setIsInstructionsModalOpen(false);
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
       {/* Header with Month Navigation and Notification Bell */}
@@ -197,6 +226,7 @@ const HabitTracker = () => {
             onCopyFromPrevious={copyFromPreviousMonth}
             onSupportProject={handleOpenKofiModal}
             onSendFeedback={handleOpenFeedbackModal}
+            onShowInstructions={handleOpenInstructionsModal}
           />
         </div>
       </div>
@@ -237,6 +267,87 @@ const HabitTracker = () => {
           onCancel={handleCloseModal}
           onKeyPress={handleKeyPress}
         />
+      </Modal>
+
+      {/* Instructions Modal */}
+      <Modal
+        isOpen={isInstructionsModalOpen}
+        onClose={handleCloseInstructionsModal}
+        title="How to Use Habit Tracker 📖"
+      >
+        <div className="space-y-4">
+          <div className="text-gray-300">
+            <h3 className="font-semibold text-white mb-2">Tracking Your Habits</h3>
+            <p className="text-sm mb-4">
+              Click on any day box to cycle through the completion states:
+            </p>
+
+            <div className="space-y-3 bg-gray-800 p-4 rounded-lg">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 border border-gray-700 rounded flex-shrink-0"></div>
+                <div>
+                  <span className="font-medium">Empty</span>
+                  <span className="text-gray-400 text-sm ml-2">Not tracked</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 border border-green-500 rounded flex items-center justify-center flex-shrink-0">
+                  <Check className="text-green-500" size={18} />
+                </div>
+                <div>
+                  <span className="font-medium">Full Completion</span>
+                  <span className="text-gray-400 text-sm ml-2">Green check = 1 point</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 border border-yellow-500 rounded flex items-center justify-center flex-shrink-0">
+                  <Check className="text-yellow-500" size={14} />
+                </div>
+                <div>
+                  <span className="font-medium">Half Completion</span>
+                  <span className="text-gray-400 text-sm ml-2">Yellow check = 0.5 points</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 border border-red-500 rounded flex items-center justify-center flex-shrink-0">
+                  <X className="text-red-500" size={18} />
+                </div>
+                <div>
+                  <span className="font-medium">Not Done</span>
+                  <span className="text-gray-400 text-sm ml-2">Red X = 0 points</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-gray-300">
+            <h3 className="font-semibold text-white mb-2">Point System</h3>
+            <ul className="text-sm space-y-1">
+              <li>
+                • <strong>Streak Count:</strong> Total points for each habit
+              </li>
+              <li>
+                • <strong>Success Rate:</strong> Percentage of completed days (half marks count as
+                50%)
+              </li>
+              <li>
+                • <strong>Recently Active:</strong> Habits with any completion in the last 5 days
+              </li>
+            </ul>
+          </div>
+
+          <div className="text-gray-300">
+            <h3 className="font-semibold text-white mb-2">Tips</h3>
+            <ul className="text-sm space-y-1">
+              <li>• Use half marks for partial completions or modified versions</li>
+              <li>• Perfect for tracking progress on difficult days</li>
+              <li>• Build consistency without "all or nothing" pressure</li>
+            </ul>
+          </div>
+        </div>
       </Modal>
 
       {/* Ko-fi Support Modal */}

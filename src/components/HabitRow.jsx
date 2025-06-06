@@ -51,6 +51,20 @@ const HabitRow = ({
 
       {daysInMonth.map((day) => {
         const futureDay = isFutureDay(day);
+        const status = habit.progress[day];
+
+        // Determine border color based on status
+        let borderClass = 'border-gray-700';
+        if (futureDay) {
+          borderClass = 'border-gray-800 bg-gray-800/30';
+        } else if (status === true) {
+          borderClass = 'border-green-500';
+        } else if (status === 'half') {
+          borderClass = 'border-yellow-500';
+        } else if (status === false) {
+          borderClass = 'border-red-500';
+        }
+
         return (
           <td
             key={`cell-${habitIndex}-${day}`}
@@ -58,7 +72,7 @@ const HabitRow = ({
             onClick={() => !futureDay && onToggleDay(habitIndex, day)}
           >
             <div
-              className={`w-6 h-6 md:w-8 md:h-8 mx-auto flex items-center justify-center border ${futureDay ? 'border-gray-800 bg-gray-800/30' : 'border-gray-700'} rounded`}
+              className={`w-6 h-6 md:w-8 md:h-8 mx-auto flex items-center justify-center border ${borderClass} rounded`}
             >
               {renderStatusIcon(habit.progress[day])}
             </div>

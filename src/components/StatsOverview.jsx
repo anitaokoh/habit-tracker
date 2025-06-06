@@ -29,10 +29,13 @@ const StatsOverview = ({ habits, currentDate }) => {
       totalTracked += progressEntries.length;
 
       progressEntries.forEach(([, /* day number not used */ status]) => {
-        // Only count true (completed) status, not false or undefined
+        // Count true (completed) as 1 and 'half' as 0.5
         if (status === true) {
           totalCompleted++;
+        } else if (status === 'half') {
+          totalCompleted += 0.5;
         }
+        // false and undefined count as 0
       });
     });
 
@@ -53,8 +56,13 @@ const StatsOverview = ({ habits, currentDate }) => {
           return habit.longestStreak;
         }
 
-        // Otherwise count the total number of check marks (true values)
-        return Object.values(progress).filter((status) => status === true).length;
+        // Otherwise count the total number of check marks (true values and half values)
+        let total = 0;
+        Object.values(progress).forEach((status) => {
+          if (status === true) total++;
+          else if (status === 'half') total += 0.5;
+        });
+        return total;
       }),
       0
     ); // The 0 ensures we return 0 if there are no habits with checks
@@ -80,13 +88,15 @@ const StatsOverview = ({ habits, currentDate }) => {
       }
     }
 
-    // Count habits with at least one completed (true) entry in the last 5 days
-    // Only count checked entries (true), not crosses (false) or blanks (undefined)
+    // Count habits with at least one completed (true or half) entry in the last 5 days
+    // Count both full checks (true) and half checks ('half'), not crosses (false) or blanks (undefined)
     const activeHabits = habits.filter((habit) => {
       if (!habit.progress) return false;
 
-      // Check if there's at least one check mark in any of the included days
-      return lastFiveDays.some((day) => habit.progress[day] === true);
+      // Check if there's at least one check mark (full or half) in any of the included days
+      return lastFiveDays.some(
+        (day) => habit.progress[day] === true || habit.progress[day] === 'half'
+      );
     });
 
     return activeHabits.length;
@@ -124,7 +134,8 @@ const StatsOverview = ({ habits, currentDate }) => {
               top: tooltipPosition.y - 50 + 'px',
             }}
           >
-            Percentage of completed days across all habits compared to total tracked days.
+            Percentage of completed days across all habits. Full checks count as 100%, half checks
+            as 50%.
           </div>
         )}
       </div>
@@ -155,7 +166,7 @@ const StatsOverview = ({ habits, currentDate }) => {
               top: tooltipPosition.y - 50 + 'px',
             }}
           >
-            The highest number of check marks achieved by any habit in this month.
+            The highest number of check marks achieved by any habit. Half marks count as 0.5.
           </div>
         )}
       </div>
@@ -188,7 +199,7 @@ const StatsOverview = ({ habits, currentDate }) => {
               top: tooltipPosition.y - 50 + 'px',
             }}
           >
-            Number of habits with at least one check mark in the last 5 days.
+            Number of habits with at least one check mark (full or half) in the last 5 days.
           </div>
         )}
       </div>

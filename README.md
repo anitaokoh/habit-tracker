@@ -2,7 +2,7 @@
 
 A clean, responsive habit tracking application built with React, Vite, and Tailwind CSS.
 
-![Habit Tracker Screenshot](https://placeholder-for-screenshot.png)
+![Habit Tracker Demo](/public/images/habit_tracker_demo.gif)
 
 ## 📝 Description
 
@@ -73,7 +73,6 @@ This Habit Tracker application helps you build consistent habits by tracking you
 ### Navigating Between Months
 
 - Use the arrow buttons to move between months
-- Click 'Today' to return to the current month
 - When entering a new month, you can copy habits from the previous month
 
 ### Update Notifications
