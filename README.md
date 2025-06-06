@@ -2,7 +2,7 @@
 
 A clean, responsive habit tracking application built with React, Vite, and Tailwind CSS.
 
-![Habit Tracker Demo](/public/images/habit_tracker_demo.gif)
+![/public/images/habit_tracker_demo.gif](https://github.com/user-attachments/assets/ff654600-9ce1-4502-a11b-3092bca0ea96)
 
 ## 📝 Description
 
